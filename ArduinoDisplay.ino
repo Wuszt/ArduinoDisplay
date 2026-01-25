@@ -1,8 +1,10 @@
-#include "U"
+#include <Arduino.h>
 
-void setup() {
-  // put your setup code here, to run once:
-
+void setup() 
+{
+  Serial.begin(115200);
+  while (!Serial) {}
+  Serial.println("Hello");
 }
 
 void loop() {
