@@ -28,6 +28,8 @@ void ActivateNextDrawer()
 
 void setup() 
 {
+  randomSeed(analogRead(0));
+
   Serial.begin(115200);
   while (!Serial) {}
 
