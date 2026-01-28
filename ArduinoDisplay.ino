@@ -5,6 +5,7 @@
 #include <memory>
 #include <LittleFS.h>
 #include "GifDrawer.h"
+#include "TestShader.h"
 #include <random>
 
 std::vector<std::unique_ptr<AD::IDisplayDrawer>> g_drawers;
@@ -20,7 +21,7 @@ void ActivateNextDrawer()
   g_currentDrawerIndex = (g_currentDrawerIndex + 1) % g_drawers.size();
   if (g_currentDrawerIndex == 0)
   {
-    std::shuffle(g_drawers.begin(), g_drawers.end(), std::default_random_engine(random()));
+    std::shuffle(g_drawers.begin(), g_drawers.end(), std::default_random_engine(esp_random()));
   }
 
   g_drawers[g_currentDrawerIndex]->Activate();
@@ -28,8 +29,6 @@ void ActivateNextDrawer()
 
 void setup() 
 {
-  randomSeed(analogRead(0));
-
   Serial.begin(115200);
   while (!Serial) {}
 
@@ -45,6 +44,7 @@ void setup()
   g_drawers.push_back(std::make_unique<AD::GifDrawer>("monke", 2u));
   g_drawers.push_back(std::make_unique<AD::GifDrawer>("witcher", 1u));
   g_drawers.push_back(std::make_unique<AD::GifDrawer>("samurai", 3u));
+  //g_drawers.push_back(std::make_unique<AD::TestShader>());
 
   ActivateNextDrawer();
 }
