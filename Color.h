@@ -14,9 +14,19 @@ namespace AD
       , m_b(b)
     {}
 
+    Color(unsigned r, unsigned g, unsigned b)
+      : m_r(r)
+      , m_g(g)
+      , m_b(b)
+    {}
+
     Color(float r, float g, float b);
 
     Color(const uint8_t arr[3])
+      : Color(arr[0], arr[1], arr[2])
+    {}
+
+    Color(const unsigned arr[3])
       : Color(arr[0], arr[1], arr[2])
     {}
 
@@ -49,6 +59,8 @@ namespace AD
     {
       return static_cast<float>(m_b) / 255.0f;
     }
+
+    static Color GetRandom();
 
   private:
     uint8_t m_r = 0u;

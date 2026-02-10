@@ -1,6 +1,6 @@
 #include "DisplayManager.h"
 #include <ESP32-HUB75-MatrixPanel-I2S-DMA.h>
-#include "Color.h"
+#include <Arduino.h>
 
 namespace AD
 {
@@ -10,8 +10,16 @@ namespace AD
     return instance;
   }
 
+  float GetTargetBrightness()
+  {
+    const int value = analogRead(33);
+    return max(0.0f, min(1.0f, 1.0f - (static_cast<float>(value) / 4095.0f)));
+  }
+
   DisplayManager::DisplayManager(uint16_t width, uint16_t height)
   {
+    m_lastUpdateTimestamp -std::numeric_limits<int>::min();
+
     HUB75_I2S_CFG config(width, height, 1);
     config.gpio.r1 = 25;
     config.gpio.g1 = 26;
@@ -29,17 +37,29 @@ namespace AD
     config.gpio.clk = 16;
     config.gpio.lat = 4;
     config.gpio.oe = 15;
+    config.clkphase = false;
     //config.double_buff = true;
 
     m_display = std::make_unique<MatrixPanel_I2S_DMA>(config);
     m_display->begin();
-    m_display->setBrightness8(128);
     m_display->clearScreen();
   }
 
-  void DisplayManager::ClearScreen()
+  void DisplayManager::Tick()
   {
-    m_display->clearScreen();
+    const int currentTime = millis();
+    const float delta = static_cast<float>(currentTime - m_lastUpdateTimestamp) / 10000.0f;
+    const float normalizedValue = GetTargetBrightness();
+    m_currentBrightness = max(0.0f, min(1.0f, m_currentBrightness + (normalizedValue - m_currentBrightness) * delta));
+    const uint8_t minBrightness = 4u;
+    const uint8_t maxBrithness = 50u; 
+    m_display->setBrightness8(minBrightness + static_cast<uint8_t>((maxBrithness - minBrightness) * m_currentBrightness));
+    m_lastUpdateTimestamp = currentTime;
+  }
+
+  void DisplayManager::ClearScreen(const Color& color)
+  {
+    m_display->fillScreenRGB888(color.GetR(), color.GetG(), color.GetB());
   }
 
   void DisplayManager::FlipScreen()
