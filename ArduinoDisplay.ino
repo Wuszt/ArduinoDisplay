@@ -50,6 +50,7 @@ void setup()
   g_drawers.push_back(std::make_unique<AD::GifDrawer>("witcher", 1u));
   g_drawers.push_back(std::make_unique<AD::GifDrawer>("samurai", 3u));
   g_drawers.push_back(std::make_unique<AD::GifDrawer>("catDevil", 15u));
+  g_drawers.push_back(std::make_unique<AD::GifDrawer>("thisisfine", 7u));
   g_drawers.push_back(std::make_unique<AD::GifDrawer>("pc", 40u));
   //g_drawers.push_back(std::make_unique<AD::TestShader>());
   g_drawers.push_back(std::make_unique<AD::GameOfLife>(60u * 1000u));
